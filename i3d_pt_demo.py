@@ -4,6 +4,12 @@ import numpy as np
 import torch
 
 from src.i3dpt import I3D
+from utils.data_fun import load_frames_from_folder_as_npy
+
+
+folder_frame = "data/frames_data/1_normal"
+data_a = load_frames_from_folder_as_npy(folder_frames=folder_frame)
+data_a = np.expand_dims(data_a, axis=0)
 
 rgb_pt_checkpoint = 'model/model_rgb.pth'
 
@@ -33,7 +39,8 @@ def run_demo(args):
         i3d_rgb.cuda()
 
         rgb_sample = np.load(args.rgb_sample_path).transpose(0, 4, 1, 2, 3)
-        out_rgb_logit = get_scores(rgb_sample, i3d_rgb)
+        # out_rgb_logit = get_scores(rgb_sample, i3d_rgb)
+        out_rgb_logit = get_scores(data_a, i3d_rgb)
 
     # Run flow model
     if args.flow:
@@ -43,7 +50,8 @@ def run_demo(args):
         i3d_flow.cuda()
 
         flow_sample = np.load(args.flow_sample_path).transpose(0, 4, 1, 2, 3)
-        out_flow_logit = get_scores(flow_sample, i3d_flow)
+        # out_flow_logit = get_scores(flow_sample, i3d_flow)
+        out_flow_logit = get_scores(data_a, i3d_flow)
 
     # Joint model
     if args.flow and args.rgb:
